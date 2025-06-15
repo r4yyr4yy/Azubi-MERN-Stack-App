@@ -1,3 +1,4 @@
+// Corrected useAddTodos.js file
 
 import { useState } from "react";
 import {
@@ -12,9 +13,9 @@ const useAddTodos = (fetchTodos, page, limit, setNewTodo) => {
   const addTodo = async (todo) => {
     try {
       setIsLoading(true);
-     
+      // THE URL IS NOW CORRECTED TO A RELATIVE PATH
       const response = await fetch(
-        "/api/todos",
+        "/api/todos", // <--- THIS IS THE FIX
         {
           method: "POST",
           headers: {
@@ -25,7 +26,7 @@ const useAddTodos = (fetchTodos, page, limit, setNewTodo) => {
       );
 
       if (!response.ok) {
-        
+        // Let's get more details on the error for better debugging
         const errorData = await response.json();
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
@@ -34,7 +35,7 @@ const useAddTodos = (fetchTodos, page, limit, setNewTodo) => {
       setNewTodo(defaultTodo);
       CustomSuccessAlert("New Todo added successfully");
     } catch (error) {
-      CustomErrorAlert(error.message); 
+      CustomErrorAlert(error.message); // Pass error.message for a clearer alert
     } finally {
       setIsLoading(false);
     }

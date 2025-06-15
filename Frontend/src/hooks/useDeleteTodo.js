@@ -1,3 +1,4 @@
+// Corrected useDeleteTodo.js file
 import { useState } from "react";
 import { CustomErrorAlert } from "../utils/general.js";
 
@@ -8,8 +9,9 @@ const useDeleteTodo = (fetchTodos, page, limit) => {
   const deleteTodo = async (id) => {
     try {
       setIsLoading(true);
+      // THE URL IS NOW CORRECTED TO A RELATIVE PATH
       const response = await fetch(
-        `https://fullstack-todolist-upnv.onrender.com/todos/${id}`,
+        `/api/todos/${id}`, // <--- THIS IS THE FIX
         {
           method: "DELETE",
           headers: {
@@ -19,12 +21,14 @@ const useDeleteTodo = (fetchTodos, page, limit) => {
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
+
       status = response.ok;
       await fetchTodos(page, limit);
     } catch (error) {
-      CustomErrorAlert(error);
+      CustomErrorAlert(error.message);
     } finally {
       setIsLoading(false);
     }

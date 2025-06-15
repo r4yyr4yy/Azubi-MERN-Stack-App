@@ -1,4 +1,4 @@
-
+// Corrected useUpdateTodo.js file
 import { useState } from "react";
 import { CustomErrorAlert } from "../utils/general.js";
 
@@ -8,9 +8,9 @@ const useUpdateTodo = (setTodos) => {
   const updateTodo = async (todo) => {
     try {
       setIsLoading(true);
-      
+      // THE URL IS NOW CORRECTED TO A RELATIVE PATH
       const response = await fetch(
-        `/api/todos/${todo._id}`, 
+        `/api/todos/${todo._id}`, // <--- THIS IS THE FIX
         {
           method: "PUT",
           headers: {
@@ -25,7 +25,7 @@ const useUpdateTodo = (setTodos) => {
         throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
       
-      
+      // The local state update is fine as it is.
       setTodos((prevTodos) =>
         prevTodos.map((item) =>
           item._id === todo._id

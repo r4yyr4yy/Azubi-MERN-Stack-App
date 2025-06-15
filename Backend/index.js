@@ -20,9 +20,9 @@ const MONGO_URI = `mongodb://${dbUser}:${dbPass}@${dbHost}:27017/${dbName}?authS
 console.log('Attempting to connect to MongoDB...');
 mongoose
   .connect(MONGO_URI)
-  .then(() => console.log('MongoDB connected successfully!'))
+  .then(() => console.log('✅ MongoDB connected successfully!'))
   .catch((error) => {
-    console.error('MongoDB connection error:', error.message);
+    console.error('❌ MongoDB connection error:', error.message);
     process.exit(1);
   });
 
@@ -105,5 +105,5 @@ app.put('/api/todos/:id', async (req, res) => {
 
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`🚀 Server is running on port ${PORT}`);
 });

@@ -8,7 +8,7 @@ const useGetTodos = (setTodos, setNumOfPages, setPage) => {
   const fetchTodos = async (page, limit) => {
     setIsLoading(true);
     try {
-      
+      // This fetch call is correct.
       const response = await fetch(
         `/api/gettodos?page=${page}&limit=${limit}`
       );
@@ -19,13 +19,15 @@ const useGetTodos = (setTodos, setNumOfPages, setPage) => {
         throw new Error(data.message || `HTTP error! status: ${response.status}`);
       }
 
-    
+      // This is correct.
       setTodos(data.todoList);
       
-      
+      // --- THIS LOGIC IS NOW UNCOMMENTED AND ACTIVE ---
+      // It uses the 'numOfPages' value sent from our updated backend.
       setNumOfPages(data.numOfPages); 
       
-   
+      // This handles the case where you delete the last item on a page,
+      // correctly sending you to the new last page.
       if (page > data.numOfPages && data.numOfPages > 0) {
         setPage(data.numOfPages);
       }

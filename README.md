@@ -3,38 +3,38 @@
     <img src="https://user-images.githubusercontent.com/62269745/174906068-aad23112-20fe-4ec8-877f-3ee1d9ec0a69.png#gh-dark-mode-only" width="40%">
 </p>
 
-# Full-Stack Todo List Application
+## Todos API
+Todos REST API with Node.js, Express.js, and MongoDB
 
-This repository hosts a full-stack Todo List application designed to allow users to create, manage, and organize their tasks efficiently. The application features a React-based frontend and a Node.js backend, utilizing MongoDB for data persistence.
+## Endpoints:
 
-## Technologies Used
+    - **`GET /todos`**: Retrieve all todos, you can pass a limit and page to perform the pagination with notes list **`GET /notes?limit=Limit&page=PAGE`**.
+    
+    - **`POST /todos`**: Add a new todo.
+    
+    - **`DELETE /todos/:id`**: Delete a specific todo using its ID.
+    
+    - **`PUT /todos/:id`**: Update a specific todo using its ID.
+    
+    - **`GET /todos?title=TITLE`**: Search notes by their title or content, search as startWith function.
+    
+## API Deployment
 
-- **Frontend**: React, Material-UI
-- **Backend**: Node.js, Express
-- **Database**: MongoDB
-- **Other Tools**: Vite, React Toastify, Lucide Icons
+The Note Keeping API is deployed and accessible at the following URL:
 
-## Project Structure
+[https://fullstack-todolist-upnv.onrender.com](https://fullstack-todolist-upnv.onrender.com)
 
-The project is divided into two main parts:
-- **Frontend**: Located in the `frontend/` directory with its own [README](frontend/README.md).
-- **Backend**: Located in the `backend/` directory with its own [README](backend/README.md).
+Feel free to interact with the live API to test its functionality.
 
-## Features
+ ## Libraries Used
 
-- Create, view, update, and delete todo items.
-- Organize tasks with tags/categories.
-- Responsive user interface adaptable to different screen sizes.
-- Real-time updates without page reloads.
+In this project, I've used the following libraries:
 
-## Contributing
+- **dotenv:** A zero-dependency module that loads environment variables from a `.env` file into `process.env`. [dotenv](https://www.npmjs.com/package/dotenv)
+- **Express:** A fast, unopinionated, minimalist web framework for Node.js. [Express](https://expressjs.com/)
+- **Mongoose:** A MongoDB object modeling tool designed to work in an asynchronous environment. [Mongoose](https://mongoosejs.com/)
+- **Nodemon:** A utility that monitors for any changes in your source and automatically restarts your server. [Nodemon](https://nodemon.io/)
 
-Contributions are welcome! See the specific README files in the `frontend/` and `backend/` directories for more details on contributing.
+Please refer to the documentation of each library for more information on how to use them.
 
-## Live Demo
-
-<h4 align="left">Live Preview is available at https://fullstack-todolist-1.onrender.com/</h4>
-
-## Snapshots
-
-<img src="./Frontend/src/assets/home-snapshot.png" alt="home page"/>
+   
