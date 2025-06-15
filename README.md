@@ -93,22 +93,40 @@ Waiting 10 seconds for services to fully start...
 
 All checks passed! The application is running correctly.
 ```
-***Troubleshooting Guide***
-**Port 8080 Already in Use**
-Cause: Another service, Apache is using port 8080.
-Fix: Stop the conflicting service or edit docker-compose.yml to change:
-ports:
-  - 8080:80
-Then access the app at ```http://localhost:80```
 
+#  Troubleshooting Guide
 
+## Port 80 Already in Use
 
-**Frontend Loads but No Data / Save Fails**
-Cause: Backend or database service is down.
-Fix: Inspect logs with:
+**Cause:**  Apache is configured to use port **80**, which conflicts with your Docker container.
+
+**Fix:**  
+Use the following commands to identify and stop the conflicting service:
+
+```
+ps 
+sudo systemctl stop apache2
+sudo systemctl disable apache2
+```
+ After resolving the conflict, the app should be accessible at: `http://localhost:80`
+ 
+![Frontend Dashboard](./assets/Frontend.png)
+
+## Frontend Loads but No Data / Save Fails**
+
+**Cause:** The backend or database service is not running or has crashed.
+
+**Fix:**
+Inspect the logs for the frontend container to identify backend connection issues
+```
 docker logs azubi-mern-stack-app-frontend-1
+```
+Check if the backend and database containers are running using:
+```
+docker ps
+```
 
-**Project Structure**
+## Project Structure
 ```
 Azubi-MERN-App/
 ├── Backend/           # Node.js + Express API
