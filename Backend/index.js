@@ -1,140 +1,109 @@
-import express from "express";
-import cors from "cors";
-import mongoose from "mongoose";
 
-// import initApp from "./src/modules/index.router.js";
-// import "dotenv/config";
-
-// const app = express();
-// const PORT = process.env.PORT || 6005;
-
-// initApp(app, express);
-
-// app.listen(PORT, () => {
-//   console.log(`listening on port ${PORT}`);
-// });
-
-
-//const express = require('express');
-//const mongoose = require('mongoose');
-//const cors = require('cors'); // Import CORS
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Use CORS Middleware
+
 app.use(cors());
-
-// Middleware to parse JSON data
 app.use(express.json());
 
-// MongoDB Connection URI
-const MONGO_URI = 'mongodb://127.0.0.1:27017';
-//const MONGO_URI = 'mongodb://mongo-shared-dev:fikTpih4U2!@20.218.241.192:27017/?directConnection=true&appName=mongosh+1.8.2&authMechanism=DEFAULT';
 
-const dbname = 'todos';
+const dbUser = process.env.MONGO_ROOT_USER;
+const dbPass = process.env.MONGO_ROOT_PASSWORD;
+const dbHost = process.env.DB_HOST;
+const dbName = process.env.MONGO_DB_NAME;
+const MONGO_URI = `mongodb://${dbUser}:${dbPass}@${dbHost}:27017/${dbName}?authSource=admin`;
 
-// Connect to MongoDB
+console.log('Attempting to connect to MongoDB...');
 mongoose
-  .connect(MONGO_URI, { dbname })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((error) => console.error('MongoDB connection error:', error));
+  .connect(MONGO_URI)
+  .then(() => console.log('MongoDB connected successfully!'))
+  .catch((error) => {
+    console.error('MongoDB connection error:', error.message);
+    process.exit(1);
+  });
 
-// Mongoose Schema and Model
-const userSchema = new mongoose.Schema({
-  username: { type: String, required: true },
-  email: { type: String, required: true },
-  age: { type: Number, default: 18 },
-});
 
 const todoSchema = new mongoose.Schema({
-  title: { type: String, },
-  date: { type: String, },
-  activity: { type: String, },
-  description: { type: String, },
-  strStatus: { type: String, }
+  title: { type: String },
+  description: { type: String },
+  isCompleted: { type: Boolean, default: false },
+  
+  date: { type: String },
+  activity: { type: String },
+  strStatus: { type: String },
 });
-
-
-
-const User = mongoose.model('User', userSchema);
 const Todos = mongoose.model('Todos', todoSchema);
 
-// Route: Fetch all users
-app.get('/api/users', async (req, res) => {
-  try {
-    const users = await User.find();
-    res.status(200).json(users);
-  } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-// Route: Fetch all users
-app.post('/api/todos', async (req, res) => {
-  const { title, description, activity, date, strStatus } = req.body;
 
-  try {
-    const todo = new Todos({
-      title,
-      description,
-      activity,
-      date,
-      strStatus
-    });
-    await todo.save();
-
-    return res.status(201).send({ todo });
-  } catch (error) {
-    // if (error.errors.title)
-    //   return res.status(400).send({ message: "the Title field is required" });
-
-    // if (error.errors.description)
-    //   return res
-    //     .status(400)
-    //     .send({ message: "the Description field is required" });
-
-    // return res.status(500).send({ message: "Internal server error" });
-    console.log(error);
-    return res.status(500).send({ message: error });
-  }
-});
-// Route: Fetch all users
 app.get('/api/gettodos', async (req, res) => {
-
   try {
+    
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const skip = (page - 1) * limit;
 
-    const todoList = await Todos.find();
+    
+    const totalTodos = await Todos.countDocuments();
+    const numOfPages = Math.ceil(totalTodos / limit);
 
-    return res.status(201).send({ todoList });
+    
+    const todoList = await Todos.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
+
+    
+    return res.status(200).json({ todoList, numOfPages });
   } catch (error) {
-    // if (error.errors.title)
-    //   return res.status(400).send({ message: "the Title field is required" });
-
-    // if (error.errors.description)
-    //   return res
-    //     .status(400)
-    //     .send({ message: "the Description field is required" });
-
-    // return res.status(500).send({ message: "Internal server error" });
-    console.log(error);
-    return res.status(500).send({ message: error });
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
-// Routes
-app.get('/', async (req, res) => {
+
+app.post('/api/todos', async (req, res) => {
   try {
-    //const Todo = await TodoModel.find();
-    res.send("Todo");
+    const todo = new Todos(req.body);
+    await todo.save();
+    return res.status(201).json({ todo });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
-  catch (e) {
-    console.log(e);
-  }
-
 });
 
-// Start the server
+
+app.delete('/api/todos/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedTodo = await Todos.findByIdAndDelete(id);
+    if (!deletedTodo) {
+      return res.status(404).json({ message: 'Todo not found' });
+    }
+    return res.status(200).json({ message: 'Todo deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
+app.put('/api/todos/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedTodo = await Todos.findByIdAndUpdate(id, req.body, { new: true });
+    if (!updatedTodo) {
+      return res.status(404).json({ message: 'Todo not found' });
+    }
+    return res.status(200).json({ todo: updatedTodo });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
-

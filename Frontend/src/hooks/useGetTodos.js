@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { CustomErrorAlert } from "../utils/general.js";
 
@@ -7,15 +8,30 @@ const useGetTodos = (setTodos, setNumOfPages, setPage) => {
   const fetchTodos = async (page, limit) => {
     setIsLoading(true);
     try {
+      
       const response = await fetch(
-        `https://fullstack-todolist-upnv.onrender.com/todos?page=${page}&limit=${limit}`
+        `/api/gettodos?page=${page}&limit=${limit}`
       );
+      
       const data = await response.json();
-      setTodos(data.todos);
-      setNumOfPages(data.numOfPages);
-      if (page > data.numOfPages) setPage(data.numOfPages);
+
+      if (!response.ok) {
+        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+      }
+
+    
+      setTodos(data.todoList);
+      
+      
+      setNumOfPages(data.numOfPages); 
+      
+   
+      if (page > data.numOfPages && data.numOfPages > 0) {
+        setPage(data.numOfPages);
+      }
+
     } catch (error) {
-      CustomErrorAlert(error);
+      CustomErrorAlert(error.message);
     } finally {
       setIsLoading(false);
     }

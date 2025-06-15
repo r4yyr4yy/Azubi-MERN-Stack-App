@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { CustomErrorAlert } from "../utils/general.js";
 
@@ -7,8 +8,9 @@ const useUpdateTodo = (setTodos) => {
   const updateTodo = async (todo) => {
     try {
       setIsLoading(true);
+      
       const response = await fetch(
-        `https://fullstack-todolist-upnv.onrender.com/todos/${todo._id}`,
+        `/api/todos/${todo._id}`, 
         {
           method: "PUT",
           headers: {
@@ -19,9 +21,11 @@ const useUpdateTodo = (setTodos) => {
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
-
+      
+      
       setTodos((prevTodos) =>
         prevTodos.map((item) =>
           item._id === todo._id
@@ -30,7 +34,7 @@ const useUpdateTodo = (setTodos) => {
         )
       );
     } catch (error) {
-      CustomErrorAlert(error);
+      CustomErrorAlert(error.message);
     } finally {
       setIsLoading(false);
     }

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import {
   CustomSuccessAlert,
@@ -11,8 +12,9 @@ const useAddTodos = (fetchTodos, page, limit, setNewTodo) => {
   const addTodo = async (todo) => {
     try {
       setIsLoading(true);
+     
       const response = await fetch(
-        "http://localhost:3000/api/todos",
+        "/api/todos",
         {
           method: "POST",
           headers: {
@@ -23,14 +25,16 @@ const useAddTodos = (fetchTodos, page, limit, setNewTodo) => {
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
 
       await fetchTodos(page, limit);
       setNewTodo(defaultTodo);
       CustomSuccessAlert("New Todo added successfully");
     } catch (error) {
-      CustomErrorAlert(error);
+      CustomErrorAlert(error.message); 
     } finally {
       setIsLoading(false);
     }
