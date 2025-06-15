@@ -31,12 +31,12 @@ A MERN Stack Application that includes:
 2. **Create the .env File**
 In the root of the project, create a .env file and paste the following:
 
-`
-# MongoDB Secrets
+```
+MongoDB Secrets
 MONGO_ROOT_USER=admin
 MONGO_ROOT_PASSWORD=dbpassword
 MONGO_DB_NAME=todos
-`
+```
 
 3. **Build and Run the Containers** 
 `
@@ -94,13 +94,13 @@ Waiting 10 seconds for services to fully start...
 All checks passed! The application is running correctly.
 ```
 
-#  Troubleshooting Guide
+## Troubleshooting Guide 
 
-## Port 80 Already in Use
+- *Port 80 Already in Use*
 
-**Cause:**  Apache is configured to use port **80**, which conflicts with your Docker container.
+*Cause:* Apache is configured to use port **80**, which conflicts with your Docker container.
 
-**Fix:**  
+*Fix:*  
 Use the following commands to identify and stop the conflicting service:
 
 ```
@@ -112,11 +112,11 @@ sudo systemctl disable apache2
  
 ![Frontend Dashboard](./assets/Frontend.png)
 
-## Frontend Loads but No Data / Save Fails**
+- *Frontend Loads but No Data / Save Fails*
 
-**Cause:** The backend or database service is not running or has crashed.
+*Cause:* The backend or database service is not running or has crashed.
 
-**Fix:**
+*Fix:*
 Inspect the logs for the frontend container to identify backend connection issues
 ```
 docker logs azubi-mern-stack-app-frontend-1
@@ -126,7 +126,7 @@ Check if the backend and database containers are running using:
 docker ps
 ```
 
-## Project Structure
+## Project Structure 
 ```
 Azubi-MERN-App/
 ├── Backend/           # Node.js + Express API
